@@ -52,6 +52,27 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Spiritual color palette
+				saffron: {
+					DEFAULT: 'hsl(var(--saffron))',
+					light: 'hsl(var(--saffron-light))'
+				},
+				gold: {
+					DEFAULT: 'hsl(var(--gold))',
+					light: 'hsl(var(--gold-light))'
+				},
+				'deep-blue': {
+					DEFAULT: 'hsl(var(--deep-blue))',
+					light: 'hsl(var(--deep-blue-light))'
+				},
+				'sacred-green': {
+					DEFAULT: 'hsl(var(--sacred-green))',
+					light: 'hsl(var(--sacred-green-light))'
+				},
+				'wisdom-purple': {
+					DEFAULT: 'hsl(var(--wisdom-purple))',
+					light: 'hsl(var(--wisdom-purple-light))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -62,6 +83,17 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				}
+			},
+			backgroundImage: {
+				'gradient-spiritual': 'var(--gradient-spiritual)',
+				'gradient-wisdom': 'var(--gradient-wisdom)',
+				'gradient-peace': 'var(--gradient-peace)',
+				'gradient-divine': 'var(--gradient-divine)'
+			},
+			boxShadow: {
+				'divine': 'var(--shadow-divine)',
+				'wisdom': 'var(--shadow-wisdom)',
+				'peaceful': 'var(--shadow-peaceful)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
