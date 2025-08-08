@@ -5,17 +5,16 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Strict CORS: allow only your Vercel origin on /api/* routes
 ALLOWED_ORIGIN = "https://dharma-guide-spiritual-chatbot.vercel.app"
 
 CORS(
     app,
     resources={r"/api/*": {
-        "origins": [ALLOWED_ORIGIN],  # do NOT use "*"
+        "origins": [ALLOWED_ORIGIN],
         "methods": ["GET", "POST", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
     }},
-    supports_credentials=False  # keep false since we're not using cookies/auth
+    supports_credentials=False
 )
 
 @app.route("/", methods=["GET"])
@@ -40,10 +39,9 @@ def health():
 def spiritual_chat():
     data = request.get_json(silent=True) or {}
     msg = (data.get("message") or "").strip()
-    
     return jsonify({
-        "success": True,
-        "echo": msg or "empty",
+        "success": True, 
+        "echo": msg or "empty", 
         "note": "CORS OK"
     })
 
