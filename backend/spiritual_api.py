@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from datetime import datetime, timezone, timedelta
 import os
-from datetime import datetime
+
+IST = timezone(timedelta(hours=5, minutes=30))
 
 app = Flask(__name__)
 CORS(app, origins="*")
@@ -17,7 +19,7 @@ except Exception as e:
     client = None
     g4f_available = False
 
-def get_spiritual_response(question, temperature=0.8, top_p=0.9, top_K=60, max_tokens=800):
+def get_spiritual_response(question, temperature=0.8, top_p=0.82, top_K=50, max_tokens=600):
     """Your spiritual wisdom function with G4F integration"""
     if not g4f_available or not client:
         return """🙏 नमस्ते! TATVA में आपका स्वागत है। 
@@ -32,29 +34,9 @@ def get_spiritual_response(question, temperature=0.8, top_p=0.9, top_K=60, max_t
     
     try:
         # Enhanced spiritual prompt for authentic responses
-        spiritual_prompt = f"""You are TATVA - a wise spiritual guide with deep knowledge of Vedic scriptures and Hindu philosophy.
-
-Your role: Provide authentic spiritual guidance combining ancient wisdom with practical modern advice.
-
-Knowledge base:
-- Bhagavad Gita (all 18 chapters and key shlokas)
-- Ramayana and Mahabharata stories
-- Upanishads and Vedic philosophy  
-- Modern spiritual psychology
-- Dharmic principles and values
-
+        spiritual_prompt = f"""You are a spiritual advisor. Answer this question with references from Bhagavad Gita, Ramayana, or Mahabharata, plus modern psychology perspective. Keep it practical and helpful.
 User's spiritual question: {question}
-
-Guidelines for response:
-- Give authentic, helpful spiritual guidance
-- Reference specific shlokas/verses when relevant
-- Combine ancient wisdom with practical advice
-- Use both Hindi and English naturally
-- Be compassionate, wise, and understanding
-- Provide actionable spiritual insights
-- Keep responses detailed but focused (500-700 words)
-
-Respond as a wise spiritual mentor would:"""
+"""
 
         # Primary G4F call with your preferred parameters
         response = client.chat.completions.create(
@@ -129,10 +111,10 @@ def spiritual_chat():
         print(f"\n[TATVA] New spiritual query: {user_message[:50]}...")
         
         # Extract G4F parameters from frontend (your original parameters)
-        temperature = data.get('temperature', 0.9)
+        temperature = data.get('temperature', 0.8)
         top_p = data.get('top_p', 0.82) 
-        top_K = data.get('top_K', 60)
-        max_tokens = data.get('max_tokens', 700)
+        top_K = data.get('top_K', 50)
+        max_tokens = data.get('max_tokens', 600)
         
         print(f"[TATVA] Using parameters - temp: {temperature}, top_p: {top_p}, tokens: {max_tokens}")
         
@@ -147,20 +129,23 @@ def spiritual_chat():
         
         print(f"[TATVA] Response generated: {len(spiritual_response)} characters")
         
+        ist_time = datetime.now(IST).strftime('%H:%M')
         return jsonify({
             'success': True,
             'response': spiritual_response,
-            'timestamp': datetime.now().strftime('%H:%M'),
+            'timestamp': ist_time,
             'g4f_used': g4f_available,
             'platform': 'render'
         })
         
     except Exception as e:
+        ist_time = datetime.now(IST).strftime('%H:%M')
         print(f"[ERROR] Spiritual chat error: {str(e)}")
+
         return jsonify({
             'success': True,
             'response': f'🙏 प्रणाम! आपका प्रश्न "{user_message}" प्राप्त हुआ है। तकनीकी समस्या के कारण विस्तृत उत्तर नहीं दे पा रहा, परंतु TATVA सेवा सक्रिय है। कृपया पुनः प्रयास करें। 🕉️',
-            'timestamp': datetime.now().strftime('%H:%M'),
+            'timestamp': ist_time,
             'platform': 'render'
         })
 

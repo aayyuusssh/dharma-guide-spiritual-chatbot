@@ -27,7 +27,7 @@ const SpiritualGuide = () => {
     try {
       console.log('🩺 [SpiritualGuide] Checking backend health...');
      const response = await fetch('https://tatva-spiritual-backend.onrender.com/api/health');
-
+      
       const data = await response.json();
       console.log('✅ [SpiritualGuide] Backend health:', data);
       setApiStatus('connected');
@@ -68,10 +68,10 @@ const SpiritualGuide = () => {
         },
         body: JSON.stringify({
           message: userMessage.text,
-          temperature: 0.9,
+          temperature: 0.8,
           top_p: 0.82,
-          top_K: 60,
-          max_tokens: 700
+          top_K: 50,
+          max_tokens: 600
         })
       });
 
