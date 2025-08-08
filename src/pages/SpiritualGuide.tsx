@@ -26,7 +26,7 @@ const SpiritualGuide = () => {
   const checkAPIHealth = async () => {
     try {
       console.log('🩺 [SpiritualGuide] Checking backend health...');
-      const response = await fetch('http://localhost:5001/api/health');
+     const response = await fetch('https://dharma-guide-spiritual-chatbot-production.up.railway.app/api/health');
       const data = await response.json();
       console.log('✅ [SpiritualGuide] Backend health:', data);
       setApiStatus('connected');
@@ -59,7 +59,7 @@ const SpiritualGuide = () => {
     try {
       console.log('📡 [SpiritualGuide] Making API call...');
       
-      const response = await fetch('http://localhost:5001/api/spiritual-chat', {
+      const response = await fetch('https://dharma-guide-spiritual-chatbot-production.up.railway.app/api/spiritual-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
