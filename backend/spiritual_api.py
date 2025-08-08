@@ -1,85 +1,52 @@
 import os
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify
 from flask_cors import CORS
+from datetime import datetime
 
 app = Flask(__name__)
 
-# Multiple CORS methods to ensure it works
-CORS(app, resources={
-    r"/*": {
-        "origins": "*",
+# Strict CORS: allow only your Vercel origin on /api/* routes
+ALLOWED_ORIGIN = "https://dharma-guide-spiritual-chatbot.vercel.app"
+
+CORS(
+    app,
+    resources={r"/api/*": {
+        "origins": [ALLOWED_ORIGIN],  # do NOT use "*"
         "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization"]
-    }
-})
+        "allow_headers": ["Content-Type", "Authorization"],
+    }},
+    supports_credentials=False  # keep false since we're not using cookies/auth
+)
 
-# Additional CORS headers
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    return response
-
-# Handle preflight requests
-@app.before_request
-def handle_preflight():
-    if request.method == "OPTIONS":
-        response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add('Access-Control-Allow-Headers', "*")
-        response.headers.add('Access-Control-Allow-Methods', "*")
-        return response
-
-@app.route('/')
-def home():
+@app.route("/", methods=["GET"])
+def root():
     return jsonify({
-        'message': '🕉️ TATVA Backend - CORS FIXED',
-        'status': 'running',
-        'cors_enabled': True
+        "ok": True,
+        "service": "TATVA API",
+        "health": "/api/health",
+        "time": datetime.utcnow().isoformat() + "Z"
     })
 
-@app.route('/api/health', methods=['GET', 'OPTIONS'])
+@app.route("/api/health", methods=["GET"])
 def health():
-    if request.method == 'OPTIONS':
-        response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add('Access-Control-Allow-Headers', "Content-Type")
-        response.headers.add('Access-Control-Allow-Methods', "GET")
-        return response
-        
     return jsonify({
-        'status': 'healthy',
-        'message': '🕉️ CORS COMPLETELY FIXED - Backend Connected!',
-        'cors_working': True,
-        'vercel_allowed': True
+        "status": "healthy",
+        "message": "Backend JSON OK",
+        "cors": "enabled",
+        "origin_allowed": ALLOWED_ORIGIN
     })
 
-@app.route('/api/spiritual-chat', methods=['POST', 'OPTIONS'])
+@app.route("/api/spiritual-chat", methods=["POST"])
 def spiritual_chat():
-    if request.method == 'OPTIONS':
-        response = make_response()
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add('Access-Control-Allow-Headers', "Content-Type")
-        response.headers.add('Access-Control-Allow-Methods', "POST")
-        return response
+    data = request.get_json(silent=True) or {}
+    msg = (data.get("message") or "").strip()
     
-    try:
-        data = request.get_json()
-        user_message = data.get('message', '').strip()
-        
-        return jsonify({
-            'success': True,
-            'response': f'🙏 CORS Fixed! Your message: "{user_message}" - Backend fully connected to Vercel frontend!'
-        })
-    except Exception as e:
-        return jsonify({
-            'success': True,
-            'response': '🙏 Backend working! CORS issue resolved completely!'
-        })
+    return jsonify({
+        "success": True,
+        "echo": msg or "empty",
+        "note": "CORS OK"
+    })
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5001))
-    print(f"🕉️ TATVA starting with CORS fix on port {port}")
-    app.run(host='0.0.0.0', port=port, debug=False)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
