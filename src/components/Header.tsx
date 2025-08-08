@@ -24,7 +24,7 @@ const Header = () => {
               <span className="text-white font-bold text-lg">ॐ</span>
             </div>
             <span className="text-xl font-bold bg-gradient-spiritual bg-clip-text text-transparent">
-              SpiritualVeda
+              TATVA
             </span>
           </Link>
 

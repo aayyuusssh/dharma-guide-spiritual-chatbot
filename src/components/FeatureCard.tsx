@@ -33,7 +33,7 @@ const FeatureCard = ({ title, description, icon: Icon, gradient, to, features }:
           {features.map((feature, index) => (
             <li key={index} className="flex items-start space-x-2">
               <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-              <span className="text-sm text-muted-foreground">{feature}</span>
+              <span className="text-sm text-muted-foreground ">{feature}</span>
             </li>
           ))}
         </ul>
@@ -41,7 +41,7 @@ const FeatureCard = ({ title, description, icon: Icon, gradient, to, features }:
         <Link to={to}>
           <Button 
             variant="outline" 
-            className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
+            className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300 mt-3"
           >
             Explore {title}
           </Button>

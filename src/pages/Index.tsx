@@ -7,7 +7,7 @@ const Index = () => {
   const features = [
     {
       title: "Spiritual Guide",
-      description: "Get personalized guidance from an AI trained in ancient wisdom, mythological stories, and spiritual teachings.",
+      description: "Get personalized guidance from an AI trained in ancient wisdom, Hindu Cultural stories, and spiritual teachings.",
       icon: MessageCircle,
       gradient: "bg-gradient-spiritual",
       to: "/spiritual-guide",
@@ -15,7 +15,7 @@ const Index = () => {
         "Chat with AI spiritual guide",
         "References from Vedas & Epics",
         "Emotional support & advice",
-        "Mythological stories"
+        "Explore to Hindu Scriptures "
       ]
     },
     {
@@ -33,7 +33,7 @@ const Index = () => {
     },
     {
       title: "Sacred Library",
-      description: "Explore a vast collection of holy texts including Vedas, Puranas, Ramayana, Mahabharata, and more.",
+      description: "Explore a vast collection of holy texts including Vedas, Puranas, Ramayana, Mahabharata, and more to enhance your mind.",
       icon: BookOpen,
       gradient: "bg-gradient-peace",
       to: "/library",

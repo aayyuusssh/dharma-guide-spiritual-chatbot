@@ -1,0 +1,267 @@
+ 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🕉️ Dharma Guide - Working Version</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #fed7aa, #fbbf24);
+            margin: 0; 
+            padding: 20px; 
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header { 
+            background: linear-gradient(135deg, #ea580c, #f59e0b);
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            border-radius: 10px; 
+            margin-bottom: 20px;
+        }
+        .messages { 
+            height: 400px; 
+            overflow-y: auto; 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .message { 
+            margin: 10px 0; 
+            padding: 10px; 
+            border-radius: 10px; 
+        }
+        .user { 
+            background: #ea580c; 
+            color: white; 
+            text-align: right; 
+            margin-left: 20%;
+        }
+        .bot { 
+            background: #f3f4f6; 
+            color: #333;
+            margin-right: 20%;
+        }
+        .input-area { 
+            display: flex; 
+            gap: 10px; 
+        }
+        input { 
+            flex: 1; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 16px;
+        }
+        button { 
+            padding: 12px 20px; 
+            background: #ea580c; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px;
+        }
+        button:hover { 
+            background: #dc2626; 
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status { 
+            text-align: center; 
+            margin: 10px 0; 
+            padding: 8px; 
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .connected { 
+            background: #dcfce7; 
+            color: #166534; 
+        }
+        .disconnected { 
+            background: #fecaca; 
+            color: #dc2626; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="margin: 0 0 10px 0;">🕉️ Dharma Guide</h1>
+            <p style="margin: 0; opacity: 0.9;">आध्यात्मिक ज्ञान का भंडार</p>
+            <div id="status" class="status disconnected" style="margin-top: 15px;">
+                🔴 Connecting to backend...
+            </div>
+        </div>
+        
+        <div id="messages" class="messages">
+            <div class="message bot">
+                <strong>🙏 नमस्कार!</strong><br>
+                मैं आपका आध्यात्मिक मार्गदर्शक हूँ। गीता, रामायण, महाभारत के ज्ञान के साथ आपकी सहायता करूंगा।<br>
+                <small style="opacity: 0.7;">कोई भी आध्यात्मिक प्रश्न पूछें...</small>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input 
+                type="text" 
+                id="messageInput" 
+                placeholder="आध्यात्मिक प्रश्न पूछें (जैसे: गीता में शांति कैसे पाएं?)"
+            />
+            <button onclick="sendMessage()" id="sendBtn">भेजें</button>
+        </div>
+        
+        <div style="text-align: center; margin-top: 15px; font-size: 12px; color: #666;">
+            Backend: <span id="backendStatus">Checking...</span> | 
+            Messages: <span id="msgCount">1</span>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5001/api';
+        let messageCount = 1;
+        
+        // Check backend health on page load
+        window.onload = async () => {
+            console.log('🚀 Dharma Guide loading...');
+            await checkBackendHealth();
+        };
+        
+        async function checkBackendHealth() {
+            try {
+                console.log('🩺 Checking backend health...');
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                console.log('✅ Backend health:', data);
+                
+                // Update UI to show connected
+                document.getElementById('status').className = 'status connected';
+                document.getElementById('status').innerHTML = '🟢 Connected to Spiritual API';
+                document.getElementById('backendStatus').textContent = 'Connected ✅';
+                
+            } catch (error) {
+                console.error('❌ Backend health check failed:', error);
+                document.getElementById('status').innerHTML = '🔴 Backend not connected';
+                document.getElementById('backendStatus').textContent = 'Disconnected ❌';
+            }
+        }
+        
+        async function sendMessage() {
+            console.log('🔥 Send message button clicked!');
+            
+            const input = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const message = input.value.trim();
+            
+            if (!message) {
+                console.log('Empty message, returning');
+                return;
+            }
+            
+            console.log('📤 Sending message:', message);
+            
+            // Disable input while processing
+            input.disabled = true;
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '⏳';
+            
+            // Add user message to UI
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Add loading message
+            const loadingId = addMessage('🔄 आध्यात्मिक ज्ञान खोजा जा रहा है...', 'bot');
+            
+            try {
+                console.log('📡 Making API call to backend...');
+                
+                const response = await fetch(`${API_URL}/spiritual-chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        temperature: 0.67,
+                        top_p: 0.82,
+                        top_K: 40,
+                        max_tokens: 500
+                    })
+                });
+                
+                console.log('📨 Response received - Status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Response data:', data);
+                
+                // Remove loading message
+                document.getElementById(loadingId).remove();
+                
+                if (data.success) {
+                    addMessage(data.response, 'bot');
+                    console.log('🎉 SUCCESS! Your G4F spiritual logic is working perfectly!');
+                } else {
+                    addMessage(`Error: ${data.error}`, 'bot');
+                }
+                
+            } catch (error) {
+                console.error('💥 API call failed:', error);
+                
+                // Remove loading message
+                document.getElementById(loadingId).remove();
+                
+                addMessage(`🚨 Connection Error: ${error.message}\n\nPlease check if backend server is running on port 5001.`, 'bot');
+            } finally {
+                // Re-enable input
+                input.disabled = false;
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = 'भेजें';
+                input.focus();
+            }
+        }
+        
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            const messageId = 'msg-' + Date.now();
+            
+            messageDiv.id = messageId;
+            messageDiv.className = `message ${sender}`;
+            messageDiv.innerHTML = text.replace(/\n/g, '<br>');
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            // Update message count
+            messageCount++;
+            document.getElementById('msgCount').textContent = messageCount;
+            
+            return messageId;
+        }
+        
+        // Enter key support
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                console.log('Enter key pressed');
+                sendMessage();
+            }
+        });
+        
+        console.log('🕉️ Dharma Guide chatbot loaded successfully!');
+    </script>
+</body>
+</html>

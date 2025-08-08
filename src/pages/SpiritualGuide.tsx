@@ -1,182 +1,192 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageCircle, Send, Heart, Brain, Lightbulb } from "lucide-react";
 
 const SpiritualGuide = () => {
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [conversation, setConversation] = useState([
+  const [messages, setMessages] = useState([
     {
-      type: "bot",
-      content: "🙏 Namaste! I'm your spiritual guide. Share what's on your heart - whether it's emotional challenges, life questions, or seeking inner peace. I'll provide guidance rooted in ancient wisdom from the Vedas, Ramayana, Mahabharata, and other sacred texts.",
-      timestamp: new Date()
+      id: 'welcome',
+      text: '🙏 Namaste! Welcome to TATVA - your companion for Authentic Vedic and spiritual guidance. Ask me any question.',
+      sender: 'bot' as const,
+      timestamp: new Date().toTimeString().slice(0,5)
     }
   ]);
+  
+  const [inputMessage, setInputMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiStatus, setApiStatus] = useState<'checking' | 'connected' | 'error'>('checking');
 
-  const handleSendMessage = async () => {
-    if (!message.trim()) return;
-    
-    setIsLoading(true);
-    const userMessage = message;
-    setMessage("");
-    
-    // Add user message
-    setConversation(prev => [...prev, {
-      type: "user",
-      content: userMessage,
-      timestamp: new Date()
-    }]);
+  useEffect(() => {
+    console.log('🚀 [SpiritualGuide] Component mounted, checking API health...');
+    checkAPIHealth();
+  }, []);
 
-    // Simulate AI response (in real implementation, this would call your AI API)
-    setTimeout(() => {
-      const responses = [
-        "Based on the teachings of the Bhagavad Gita, Lord Krishna reminds us that 'You have the right to perform your actions, but you are not entitled to the fruits of your actions.' This wisdom suggests focusing on your efforts rather than being anxious about outcomes. In the Ramayana, when Sita faced difficulties, she found strength through faith and dharma. Your current challenge is an opportunity for spiritual growth.",
-        "The Mahabharata teaches us through Yudhishthira's trials that even the most righteous face difficulties. In the Vana Parva, when the Pandavas were in exile, they learned that patience and righteousness eventually lead to victory. Your situation reminds me of this teaching - maintain your dharma and trust in divine timing.",
-        "In the Vedas, particularly the Upanishads, we learn 'Tat tvam asi' - 'Thou art That.' This means the divine consciousness within you is the same as the universal consciousness. Your emotional pain is temporary, but your true Self is eternal and peaceful. Like Nachiketa in the Katha Upanishad, seek the eternal rather than the temporary."
-      ];
-      
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
-      setConversation(prev => [...prev, {
-        type: "bot",
-        content: randomResponse,
-        timestamp: new Date()
-      }]);
-      
-      setIsLoading(false);
-    }, 2000);
+  const checkAPIHealth = async () => {
+    try {
+      console.log('🩺 [SpiritualGuide] Checking backend health...');
+      const response = await fetch('http://localhost:5001/api/health');
+      const data = await response.json();
+      console.log('✅ [SpiritualGuide] Backend health:', data);
+      setApiStatus('connected');
+    } catch (error) {
+      console.error('❌ [SpiritualGuide] Health check failed:', error);
+      setApiStatus('error');
+    }
   };
 
-  const suggestionCards = [
-    {
-      icon: Heart,
-      title: "Emotional Healing",
-      description: "Finding peace through ancient wisdom",
-      query: "I'm feeling overwhelmed with emotions. How can ancient wisdom help me find peace?"
-    },
-    {
-      icon: Brain,
-      title: "Life Decisions",
-      description: "Guidance for important choices",
-      query: "I'm facing a difficult decision in life. What would the ancient texts advise?"
-    },
-    {
-      icon: Lightbulb,
-      title: "Spiritual Growth",
-      description: "Deepening your spiritual practice",
-      query: "How can I deepen my spiritual practice and connection with the divine?"
+  const handleSendMessage = async () => {
+    console.log('🔥 [SpiritualGuide] Send message triggered!');
+    
+    if (!inputMessage.trim() || isLoading) {
+      console.log('⚠️ [SpiritualGuide] Message blocked - empty or loading');
+      return;
     }
-  ];
+
+    const userMessage = {
+      id: 'user-' + Date.now(),
+      text: inputMessage.trim(),
+      sender: 'user' as const,
+      timestamp: new Date().toTimeString().slice(0,5)
+    };
+
+    console.log('👤 [SpiritualGuide] User message:', userMessage.text);
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
+    setIsLoading(true);
+
+    try {
+      console.log('📡 [SpiritualGuide] Making API call...');
+      
+      const response = await fetch('http://localhost:5001/api/spiritual-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage.text,
+          temperature: 0.9,
+          top_p: 0.82,
+          top_K: 60,
+          max_tokens: 700
+        })
+      });
+
+      console.log('📨 [SpiritualGuide] Response status:', response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ [SpiritualGuide] Response data received');
+
+      if (data && data.success) {
+        const botMessage = {
+          id: 'bot-' + Date.now(),
+          text: data.response,
+          sender: 'bot' as const,
+          timestamp: data.timestamp || new Date().toTimeString().slice(0,5)
+        };
+        
+        console.log('🤖 [SpiritualGuide] Adding bot response to UI');
+        setMessages(prev => [...prev, botMessage]);
+        console.log('🎉 [SpiritualGuide] SUCCESS! Your G4F spiritual logic working!');
+      } else {
+        throw new Error(data?.error || 'Invalid response format');
+      }
+
+    } catch (error) {
+      console.error('💥 [SpiritualGuide] API call failed:', error);
+      
+      const errorMessage = {
+        id: 'error-' + Date.now(),
+        text: `🚨 Connection Error: ${error.message}`,
+        sender: 'bot' as const,
+        timestamp: new Date().toLocaleTimeString()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-gradient-spiritual text-white py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex justify-center mb-4">
-            <MessageCircle className="w-12 h-12" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Spiritual Guide</h1>
-          <p className="text-xl opacity-90">
-            Get personalized guidance rooted in ancient wisdom and sacred texts
-          </p>
-        </div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Suggestion Cards */}
-        {conversation.length === 1 && (
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold mb-4 text-center">How can I guide you today?</h2>
-            <div className="grid md:grid-cols-3 gap-4">
-              {suggestionCards.map((card, index) => (
-                <Card 
-                  key={index} 
-                  className="cursor-pointer hover:shadow-peaceful transition-all duration-300 border-border/50 hover:border-border"
-                  onClick={() => setMessage(card.query)}
-                >
-                  <CardHeader className="text-center">
-                    <div className="flex justify-center mb-2">
-                      <div className="w-10 h-10 bg-gradient-spiritual rounded-lg flex items-center justify-center">
-                        <card.icon className="w-5 h-5 text-white" />
-                      </div>
-                    </div>
-                    <CardTitle className="text-lg">{card.title}</CardTitle>
-                    <CardDescription>{card.description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              ))}
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 p-4">
+      <div className="max-w-4xl mx-auto">
+        
+        {/* Header */}
+        <Card className="mb-6">
+          <CardHeader className="bg-gradient-to-r from-orange-600 to-amber-600 text-white rounded-t-lg">
+            <CardTitle className="text-3xl text-center">🕉️ Dharma Guide - TATVA</CardTitle>
+            <p className="text-center opacity-90">आध्यात्मिक ज्ञान का भंडार</p>
+            <div className={`text-xs text-center px-3 py-1 rounded-full inline-block mx-auto mt-2 ${
+              apiStatus === 'connected' ? 'bg-green-500' : 
+              apiStatus === 'error' ? 'bg-red-500' : 'bg-yellow-500'
+            }`}>
+              {apiStatus === 'connected' ? '🟢 Connected' : 
+               apiStatus === 'error' ? '🔴 Disconnected' : '🟡 Checking...'}
             </div>
-          </div>
-        )}
+          </CardHeader>
+        </Card>
 
-        {/* Conversation */}
-        <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
-          {conversation.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
-                  msg.type === "user"
-                    ? "bg-gradient-spiritual text-white"
-                    : "bg-card border border-border"
-                }`}
-              >
-                <p className="text-sm leading-relaxed">{msg.content}</p>
-                <p className={`text-xs mt-2 ${
-                  msg.type === "user" ? "text-white/70" : "text-muted-foreground"
-                }`}>
-                  {msg.timestamp.toLocaleTimeString()}
-                </p>
-              </div>
-            </div>
-          ))}
-          {isLoading && (
-            <div className="flex justify-start">
-              <div className="bg-card border border-border px-4 py-3 rounded-2xl">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse delay-100"></div>
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse delay-200"></div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Input Area */}
+        {/* Chat Interface */}
         <Card>
-          <CardContent className="p-4">
-            <div className="flex space-x-4">
-              <Textarea
-                placeholder="Share your thoughts, questions, or emotional challenges..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
-                className="flex-1 resize-none border-border/50 focus:border-primary"
-                rows={3}
-              />
-              <Button
-                onClick={handleSendMessage}
-                disabled={!message.trim() || isLoading}
-                className="bg-gradient-spiritual hover:opacity-90 self-end"
-                size="icon"
-              >
-                <Send className="w-4 h-4" />
-              </Button>
+          <CardContent className="p-0">
+            {/* Messages */}
+            <div className="h-96 overflow-y-auto p-6 space-y-4">
+              {messages.map(message => (
+                <div key={message.id} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg shadow-sm ${
+                    message.sender === 'user' 
+                      ? 'bg-orange-500 text-white' 
+                      : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    <div className="whitespace-pre-wrap text-sm">{message.text}</div>
+                    <div className="text-xs opacity-70 mt-2">{message.timestamp}</div>
+                  </div>
+                </div>
+              ))}
+              
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 text-gray-800 px-4 py-3 rounded-lg animate-pulse">
+                    🔄 Processing...
+                  </div>
+                </div>
+              )}
             </div>
-            <p className="text-xs text-muted-foreground mt-2 text-center">
-              Press Enter to send, Shift+Enter for new line
-            </p>
+
+            {/* Input Area */}
+            <div className="border-t p-6">
+              <div className="flex space-x-3">
+                <Input
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' && !isLoading) {
+                      handleSendMessage();
+                    }
+                  }}
+                  placeholder="Ask the Question..."
+                  disabled={isLoading}
+                  className="flex-1"
+                />
+                <Button
+                  onClick={handleSendMessage}
+                  disabled={!inputMessage.trim() || isLoading}
+                  className="bg-orange-500 hover:bg-orange-600"
+                >
+                  {isLoading ? '⏳' : 'Send'}
+                </Button>
+              </div>
+              
+              {/* Status */}
+              <div className="mt-3 text-xs text-center text-gray-600">
+                Backend: {apiStatus} | Messages: {messages.length}
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

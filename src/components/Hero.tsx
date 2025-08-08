@@ -34,7 +34,7 @@ const Hero = () => {
             </h1>
             
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-              Your spiritual journey begins here. Get personalized guidance from ancient wisdom, 
+              Your spiritual journey begins here at TATVA (Truthful Answers Through Vedic Authenticity). Get personalized guidance from ancient wisdom, 
               learn sacred teachings, and explore the vast library of spiritual knowledge.
             </p>
           </div>
