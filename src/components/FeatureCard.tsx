@@ -18,11 +18,11 @@ const FeatureCard = ({ title, description, icon: Icon, gradient, to, features }:
       {/* Gradient Background */}
       <div className={`absolute inset-0 ${gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-300`} />
       
-      <CardHeader className="relative">
-        <div className={`w-12 h-12 rounded-xl ${gradient} flex items-center justify-center mb-4 shadow-peaceful`}>
-          <Icon className="w-6 h-6 text-white" />
+      <CardHeader className="relative text-center">
+        <div className={`w-14 h-14 rounded-xl ${gradient} flex items-center justify-center mb-4 shadow-peaceful mx-auto`}>
+          <Icon className="w-8 h-8 text-white" />
         </div>
-        <CardTitle className="text-xl font-bold text-foreground">{title}</CardTitle>
+        <CardTitle className="text-2xl font-bold text-foreground ">{title}</CardTitle>
         <CardDescription className="text-muted-foreground leading-relaxed">
           {description}
         </CardDescription>

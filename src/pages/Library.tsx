@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Search, Download, Star, Filter } from "lucide-react";
+import Header from "@/components/Header";
 
 const Library = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,7 +22,6 @@ const Library = () => {
       chapters: 18,
       verses: 700,
       language: "Sanskrit",
-      rating: 5,
       difficulty: "Beginner",
       cover: "bg-gradient-spiritual"
     },
@@ -34,7 +34,6 @@ const Library = () => {
       chapters: 10,
       verses: 1028,
       language: "Vedic Sanskrit",
-      rating: 5,
       difficulty: "Advanced",
       cover: "bg-gradient-wisdom"
     },
@@ -110,6 +109,7 @@ const Library = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       {/* Header */}
       <div className="bg-gradient-peace text-white py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -179,11 +179,11 @@ const Library = () => {
                         {book.subtitle}
                       </CardDescription>
                     </div>
-                    <div className="flex items-center space-x-1">
+                    {/* <div className="flex items-center space-x-1">
                       {[...Array(book.rating)].map((_, i) => (
                         <Star key={i} className="w-4 h-4 fill-saffron text-saffron" />
                       ))}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </CardHeader>
@@ -221,7 +221,7 @@ const Library = () => {
 
                 {/* Actions */}
                 <div className="flex space-x-2 pt-2">
-                  <Button className="flex-1 bg-gradient-peace hover:opacity-90" size="sm">
+                  <Button className="flex-1 bg-gradient-peace hover:opacity-90 " size="sm">
                     Read Online
                   </Button>
                   <Button variant="outline" size="sm">

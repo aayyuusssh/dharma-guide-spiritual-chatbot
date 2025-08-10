@@ -7,6 +7,9 @@ const Header = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Check if current page is home page
+  const isHomePage = location.pathname === "/";
+
   const navItems = [
     { path: "/", label: "Home", icon: null },
     { path: "/spiritual-guide", label: "Spiritual Guide", icon: MessageCircle },
@@ -49,12 +52,14 @@ const Header = () => {
             })}
           </nav>
 
-          {/* CTA Button */}
-          <div className="hidden md:block">
-            <Button variant="default" className="bg-gradient-spiritual hover:opacity-90 shadow-divine">
-              Get Started
-            </Button>
-          </div>
+           {/* CTA Button - Only show on home page */}
+          {isHomePage && (
+            <div className="hidden md:block">
+              <Button variant="default" className="bg-gradient-spiritual hover:opacity-90 shadow-divine">
+                Get Started
+              </Button>
+            </div>
+          )}
 
           {/* Mobile Menu Button */}
           <button
@@ -87,11 +92,13 @@ const Header = () => {
                   </Link>
                 );
               })}
-              <div className="pt-2">
-                <Button variant="default" className="w-full bg-gradient-spiritual hover:opacity-90">
-                  Get Started
-                </Button>
-              </div>
+              {isHomePage && (
+                  <div className="pt-2">
+                    <Button variant="default" className="w-full bg-gradient-spiritual hover:opacity-90">
+                      Get Started
+                    </Button>
+                  </div>
+              )}
             </nav>
           </div>
         )}

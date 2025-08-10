@@ -19,7 +19,7 @@ except Exception as e:
     client = None
     g4f_available = False
 
-def get_spiritual_response(question, temperature=0.8, top_p=0.82, top_K=50, max_tokens=600):
+def get_spiritual_response(question, temperature=0.8, top_p=0.82, max_tokens=1600):
     """Your spiritual wisdom function with G4F integration"""
     if not g4f_available or not client:
         return """🙏 नमस्ते! TATVA में आपका स्वागत है। 
@@ -44,7 +44,6 @@ User's spiritual question: {question}
             messages=[{"role": "user", "content": spiritual_prompt}],
             temperature=temperature,
             max_tokens=max_tokens,
-            top_K=top_K,
             top_p=top_p,
         )
         return response.choices[0].message.content
@@ -58,7 +57,6 @@ User's spiritual question: {question}
                 messages=[{"role": "user", "content": f"You are a spiritual advisor with knowledge of Vedic scriptures. Provide wise guidance for: {question}"}],
                 temperature=temperature,
                 max_tokens=max_tokens,
-                top_K=top_K,
                 top_p=top_p,
             )
             return fallback_response.choices[0].message.content
@@ -113,8 +111,7 @@ def spiritual_chat():
         # Extract G4F parameters from frontend (your original parameters)
         temperature = data.get('temperature', 0.8)
         top_p = data.get('top_p', 0.82) 
-        top_K = data.get('top_K', 50)
-        max_tokens = data.get('max_tokens', 600)
+        max_tokens = data.get('max_tokens', 1600)
         
         print(f"[TATVA] Using parameters - temp: {temperature}, top_p: {top_p}, tokens: {max_tokens}")
         
@@ -122,8 +119,7 @@ def spiritual_chat():
         spiritual_response = get_spiritual_response(
             user_message, 
             temperature, 
-            top_p, 
-            top_K, 
+            top_p,  
             max_tokens
         )
         

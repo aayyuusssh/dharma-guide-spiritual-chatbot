@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { GraduationCap, Search, BookOpen, Volume2, Eye } from "lucide-react";
+import Header from "@/components/Header";
 
 const Learning = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -55,7 +56,9 @@ const Learning = () => {
   );
 
   return (
+    
     <div className="min-h-screen bg-background">
+      <Header />
       {/* Header */}
       <div className="bg-gradient-wisdom text-white py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

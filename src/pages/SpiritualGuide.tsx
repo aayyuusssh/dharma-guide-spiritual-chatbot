@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import Header from "@/components/Header";
 
 const SpiritualGuide = () => {
   const [messages, setMessages] = useState([
@@ -70,8 +71,7 @@ const SpiritualGuide = () => {
           message: userMessage.text,
           temperature: 0.8,
           top_p: 0.82,
-          top_K: 50,
-          max_tokens: 600
+          max_tokens: 1600
         })
       });
 
@@ -116,6 +116,7 @@ const SpiritualGuide = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 p-4">
+      <Header />
       <div className="max-w-4xl mx-auto">
         
         {/* Header */}
