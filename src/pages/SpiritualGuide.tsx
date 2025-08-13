@@ -186,9 +186,9 @@ const SpiritualGuide = () => {
               </div>
               
               {/* Status */}
-              <div className="mt-3 text-xs text-center text-gray-600">
+              {/* <div className="mt-3 text-xs text-center text-gray-600">
                 Backend: {apiStatus} | Messages: {messages.length}
-              </div>
+              </div> */}
             </div>
           </CardContent>
         </Card>

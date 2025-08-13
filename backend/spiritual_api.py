@@ -34,7 +34,43 @@ def get_spiritual_response(question, temperature=0.8, top_p=0.82, max_tokens=160
     
     try:
         # Enhanced spiritual prompt for authentic responses
-        spiritual_prompt = f"""You are a spiritual advisor. Answer this question with references from Bhagavad Gita, Ramayana, or Mahabharata, plus modern psychology perspective. Keep it practical and helpful.
+        spiritual_prompt = f""" Answer in the same language as the question was asked.
+
+Follow this exact structure:
+
+1. **Factual Explanation**: Provide clear, factual information about the topic.
+
+2. **Philosophical Interpretation**: Explain using teachings from Bhagavad Gita or Mahabharata (whichever is more suitable).
+
+3. **Real-World Example**: Give a relatable modern example to illustrate the concept.
+
+4. **Relevant Shlokas**: Include Sanskrit verses in Devanagari script with English translations using this exact format:
+
+        **Sanskrit (Devanagari):**
+        श्लोक text here in proper Devanagari script
+
+        **English Translation:**
+        Complete English translation here
+
+        **Meaning/Context:**
+        Explain the deeper meaning and relevance to the question
+
+        Example format:
+        **Sanskrit (Devanagari):**
+        कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।
+        मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥
+
+        **English Translation:**
+        You have a right to perform your prescribed duty, but never to the fruits of action. Never consider yourself the cause of the results of your activities, and never be attached to not doing your duty.
+
+        **Meaning/Context:**
+        This verse teaches about performing duty without attachment to results.
+
+        IMPORTANT: Always provide Sanskrit shlokas in proper Devanagari script (देवनागरी), not in English transliteration. Include complete English translations and explain relevance to the question.
+
+
+If the question is not related to Hindu philosophy or religion, politely refuse to answer. 
+
 User's spiritual question: {question}
 """
 
@@ -54,7 +90,44 @@ User's spiritual question: {question}
             # Fallback to GPT-4 with simpler prompt
             fallback_response = client.chat.completions.create(
                 model="gpt-4",
-                messages=[{"role": "user", "content": f"You are a spiritual advisor with knowledge of Vedic scriptures. Provide wise guidance for: {question}"}],
+                messages=[{"role": "user", "content": f""" Answer in the same language as the question was asked.
+
+Follow this exact structure:
+
+1. **Factual Explanation**: Provide clear, factual information about the topic.
+
+2. **Philosophical Interpretation**: Explain using teachings from Bhagavad Gita or Mahabharata (whichever is more suitable).
+
+3. **Real-World Example**: Give a relatable modern example to illustrate the concept.
+
+4. **Relevant Shlokas**: Include Sanskrit verses in Devanagari script with English translations using this exact format:
+
+        **Sanskrit (Devanagari):**
+        श्लोक text here in proper Devanagari script
+
+        **English Translation:**
+        Complete English translation here
+
+        **Meaning/Context:**
+        Explain the deeper meaning and relevance to the question
+
+        Example format:
+        **Sanskrit (Devanagari):**
+        कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।
+        मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥
+
+        **English Translation:**
+        You have a right to perform your prescribed duty, but never to the fruits of action. Never consider yourself the cause of the results of your activities, and never be attached to not doing your duty.
+
+        **Meaning/Context:**
+        This verse teaches about performing duty without attachment to results.
+
+        IMPORTANT: Always provide Sanskrit shlokas in proper Devanagari script (देवनागरी), not in English transliteration. Include complete English translations and explain relevance to the question.
+                           
+
+If the question is not related to Hindu philosophy or religion, politely refuse to answer. 
+                           
+Provide wise guidance for: {question}"""}],
                 temperature=temperature,
                 max_tokens=max_tokens,
                 top_p=top_p,
