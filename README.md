@@ -1,61 +1,58 @@
 **TATVA — Spiritual Guidance Platform**
 
-Overview
+**Overview**
 A React + TypeScript single‑page app that delivers AI‑assisted spiritual guidance inspired by Vedic literature, with a Flask API for responses.
 
-Tech Stack
+**Tech Stack**
 
-Frontend: React, Vite, TypeScript, Tailwind CSS, shadcn‑ui, React Router
+      Frontend: React, Vite, TypeScript, Tailwind CSS, shadcn‑ui, React Router
+      
+      Backend: Python, Flask, Gunicorn
+      
+      Hosting: Vercel (frontend), Render (backend)
 
-Backend: Python, Flask, Gunicorn
+**Quick Start**
 
-Hosting: Vercel (frontend), Render (backend)
+    Frontend
+    
+    npm install
+    
+    npm run dev
 
-Quick Start
+    Backend
+    
+    cd backend
+    
+    pip install -r requirements.txt
+    
+    python spiritual_api.py
 
-Frontend
+    Configuration
+    
+    Frontend .env:
+    
+    VITE_API_BASE_URL=http://localhost:5000 (dev) or your Render URL (prod)
+    
+    vercel.json:
+    
+    { "rewrites": [ { "source": "/(.*)", "destination": "/index.html" } ] }
 
-npm install
+**API**
 
-npm run dev
+    GET /api/health — service status
+    
+    POST /api/spiritual-chat — body: { message, temperature?, top_p?, max_tokens? }
 
-Backend
+**Deploy**
+    
+    Frontend: push to repo connected on Vercel
+    
+    Backend: Render web service; start command: gunicorn spiritual_api:app
 
-cd backend
+**Links**
 
-pip install -r requirements.txt
+  App: https://dharma-guide-spiritual-chatbot.vercel.app
+  
+  API Health: https://tatva-spiritual-backend.onrender.com/api/health
 
-python spiritual_api.py
 
-Configuration
-
-Frontend .env:
-
-VITE_API_BASE_URL=http://localhost:5000 (dev) or your Render URL (prod)
-
-vercel.json:
-
-{ "rewrites": [ { "source": "/(.*)", "destination": "/index.html" } ] }
-
-API
-
-GET /api/health — service status
-
-POST /api/spiritual-chat — body: { message, temperature?, top_p?, max_tokens? }
-
-Deploy
-
-Frontend: push to repo connected on Vercel
-
-Backend: Render web service; start command: gunicorn spiritual_api:app
-
-Links
-
-App: https://dharma-guide-spiritual-chatbot.vercel.app
-
-API Health: https://tatva-spiritual-backend.onrender.com/api/health
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
-"# dharma-guide-spiritual-chatbot" 
